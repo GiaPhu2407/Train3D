@@ -168,6 +168,14 @@ class SoundEngine {
     }
   }
 
+  public playHoverTick() {
+    this.playClick(1100, 0.02);
+  }
+
+  public playConfirmationTone() {
+    this.playChime(659.25, 0.4);
+  }
+
   // Synthesized Luxury Travel Ambience Melody (Pentatonic peaceful travel chord progression)
   public startTravelMusic() {
     this.initContext();

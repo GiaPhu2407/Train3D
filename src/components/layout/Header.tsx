@@ -1,13 +1,27 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Volume2, VolumeX, Menu, X, Globe, Train, Sparkles, ChevronDown, Music } from 'lucide-react';
-import { soundFx } from '@/lib/audio';
-import { Button } from '@/components/ui/Button';
-import { Language, TRANSLATIONS } from '@/lib/translations';
-import { Currency } from '@/lib/utils';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Volume2,
+  VolumeX,
+  Menu,
+  X,
+  Globe,
+  Train,
+  Sparkles,
+  ChevronDown,
+  Music,
+  Search,
+  Calendar,
+  Zap,
+} from "lucide-react";
+import { soundFx } from "@/lib/audio";
+import { Button } from "@/components/ui/Button";
+import { Language, TRANSLATIONS } from "@/lib/translations";
+import { Currency } from "@/lib/utils";
+import { AmbientSoundPlayer } from "@/components/v2/AmbientSoundPlayer";
 
 interface HeaderProps {
   currentLang: Language;
@@ -15,6 +29,10 @@ interface HeaderProps {
   currentCurrency: Currency;
   onCurrencyChange: (currency: Currency) => void;
   onOpenBooking: () => void;
+  onOpenTicketLookup?: () => void;
+  onOpenFareCalendar?: () => void;
+  isV2Active?: boolean;
+  onTriggerUpdate?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -23,6 +41,10 @@ export const Header: React.FC<HeaderProps> = ({
   currentCurrency,
   onCurrencyChange,
   onOpenBooking,
+  onOpenTicketLookup,
+  onOpenFareCalendar,
+  isV2Active,
+  onTriggerUpdate,
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -36,8 +58,8 @@ export const Header: React.FC<HeaderProps> = ({
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 40);
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Listen to music state changes
@@ -54,10 +76,10 @@ export const Header: React.FC<HeaderProps> = ({
       if (!soundFx.getMusicPlaying()) {
         soundFx.startTravelMusic();
       }
-      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener("click", handleFirstInteraction);
     };
-    window.addEventListener('click', handleFirstInteraction, { once: true });
-    return () => window.removeEventListener('click', handleFirstInteraction);
+    window.addEventListener("click", handleFirstInteraction, { once: true });
+    return () => window.removeEventListener("click", handleFirstInteraction);
   }, []);
 
   const toggleMusic = () => {
@@ -65,26 +87,30 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   const navItems = [
-    { label: t.nav.home, href: '#' },
-    { label: t.nav.bookTickets, href: '#booking-section', onClick: onOpenBooking },
-    { label: t.nav.routes, href: '#routes' },
-    { label: t.nav.trainServices, href: '#train-types' },
-    { label: t.nav.destinations, href: '#destinations' },
-    { label: t.nav.aboutUs, href: '#why-us' },
-    { label: t.nav.contact, href: '#contact' },
+    { label: t.nav.home, href: "#" },
+    {
+      label: t.nav.bookTickets,
+      href: "#booking-section",
+      onClick: onOpenBooking,
+    },
+    { label: t.nav.routes, href: "#routes" },
+    { label: t.nav.trainServices, href: "#train-types" },
+    { label: t.nav.destinations, href: "#destinations" },
+    { label: t.nav.aboutUs, href: "#why-us" },
+    { label: t.nav.contact, href: "#contact" },
   ];
 
   const languages: { code: Language; label: string; flag: string }[] = [
-    { code: 'EN', label: 'English', flag: '🇬🇧' },
-    { code: 'VI', label: 'Tiếng Việt', flag: '🇻🇳' },
-    { code: 'JP', label: '日本語', flag: '🇯🇵' },
+    { code: "EN", label: "English", flag: "🇬🇧" },
+    { code: "VI", label: "Tiếng Việt", flag: "🇻🇳" },
+    { code: "JP", label: "日本語", flag: "🇯🇵" },
   ];
 
   const currencies: { code: Currency; symbol: string; label: string }[] = [
-    { code: 'VND', symbol: '₫', label: 'VND (₫)' },
-    { code: 'USD', symbol: '$', label: 'USD ($)' },
-    { code: 'EUR', symbol: '€', label: 'EUR (€)' },
-    { code: 'JPY', symbol: '¥', label: 'JPY (¥)' },
+    { code: "VND", symbol: "₫", label: "VND (₫)" },
+    { code: "USD", symbol: "$", label: "USD ($)" },
+    { code: "EUR", symbol: "€", label: "EUR (€)" },
+    { code: "JPY", symbol: "¥", label: "JPY (¥)" },
   ];
 
   return (
@@ -92,8 +118,8 @@ export const Header: React.FC<HeaderProps> = ({
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
           isScrolled
-            ? 'bg-[#0B0F14]/85 backdrop-blur-xl border-b border-[#C9A96E]/20 py-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)]'
-            : 'bg-gradient-to-b from-[#070A0E]/80 via-[#070A0E]/30 to-transparent py-5'
+            ? "bg-[#0B0F14]/85 backdrop-blur-xl border-b border-[#C9A96E]/20 py-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+            : "bg-gradient-to-b from-[#070A0E]/80 via-[#070A0E]/30 to-transparent py-5"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -141,27 +167,60 @@ export const Header: React.FC<HeaderProps> = ({
           </nav>
 
           {/* Right Action Controls */}
-          <div className="hidden md:flex items-center space-x-3">
+          <div className="hidden md:flex items-center space-x-2.5">
+            {/* Tra Cứu Vé PNR Button */}
+            {onOpenTicketLookup && (
+              <button
+                onClick={onOpenTicketLookup}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white/5 border border-slate-700/60 text-slate-300 hover:border-[#C9A96E]/60 hover:text-[#D8B978] transition-colors"
+                title="Tra cứu mã vé PNR & QR Boarding Pass"
+              >
+                <Search className="w-3.5 h-3.5 text-[#D8B978]" />
+                <span>Tra Cứu Vé</span>
+              </button>
+            )}
+
+            {/* Lịch Vé Giá Rẻ Button */}
+            {onOpenFareCalendar && (
+              <button
+                onClick={onOpenFareCalendar}
+                className="hidden xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white/5 border border-slate-700/60 text-emerald-400 hover:border-emerald-500/60 transition-colors"
+                title="Lịch tìm vé giá tốt nhất"
+              >
+                <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Lịch Vé Rẻ</span>
+              </button>
+            )}
+
+            {/* Ambient Sound Player */}
+            <AmbientSoundPlayer />
+
             {/* 🎵 Travel Background Music Toggle Button with Dancing Equalizer */}
             <button
               onClick={toggleMusic}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all duration-300 ${
                 isMusicPlaying
-                  ? 'bg-[#C9A96E]/20 border-[#C9A96E] text-[#D8B978] shadow-[0_0_15px_rgba(201,169,110,0.4)]'
-                  : 'bg-white/5 border-slate-700/60 text-slate-400 hover:text-slate-200'
+                  ? "bg-[#C9A96E]/20 border-[#C9A96E] text-[#D8B978] shadow-[0_0_15px_rgba(201,169,110,0.4)]"
+                  : "bg-white/5 border-slate-700/60 text-slate-400 hover:text-slate-200"
               }`}
-              title={isMusicPlaying ? 'Tắt nhạc du lịch / Mute Travel Music' : 'Bật nhạc du lịch thư giãn / Play Travel Music'}
+              title={
+                isMusicPlaying
+                  ? "Tắt nhạc du lịch / Mute Travel Music"
+                  : "Bật nhạc du lịch thư giãn / Play Travel Music"
+              }
               aria-label="Travel Music Toggle"
             >
-              <Music className={`w-3.5 h-3.5 ${isMusicPlaying ? 'animate-bounce text-[#D8B978]' : 'text-slate-400'}`} />
-              
+              <Music
+                className={`w-3.5 h-3.5 ${isMusicPlaying ? "animate-bounce text-[#D8B978]" : "text-slate-400"}`}
+              />
+
               {/* Dancing Equalizer Bars */}
               <div className="flex items-end gap-0.5 h-3.5">
                 {[0.4, 0.9, 0.6, 1].map((h, i) => (
                   <div
                     key={i}
                     className={`w-0.5 rounded-full bg-[#D8B978] transition-all duration-200 ${
-                      isMusicPlaying ? 'animate-pulse' : 'opacity-30'
+                      isMusicPlaying ? "animate-pulse" : "opacity-30"
                     }`}
                     style={{
                       height: `${isMusicPlaying ? h * 14 : 3}px`,
@@ -172,7 +231,7 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
 
               <span className="text-[11px] font-mono font-bold tracking-wider">
-                {isMusicPlaying ? 'Travel Harmony' : 'Nhạc Du Lịch'}
+                {isMusicPlaying ? "Travel Harmony" : "Nhạc Du Lịch"}
               </span>
             </button>
 
@@ -207,12 +266,14 @@ export const Header: React.FC<HeaderProps> = ({
                         }}
                         className={`w-full text-left px-3 py-1.5 text-xs rounded-lg flex items-center justify-between transition-colors ${
                           currentCurrency === c.code
-                            ? 'bg-[#C9A96E]/20 text-[#D8B978] font-bold'
-                            : 'text-slate-300 hover:bg-white/5'
+                            ? "bg-[#C9A96E]/20 text-[#D8B978] font-bold"
+                            : "text-slate-300 hover:bg-white/5"
                         }`}
                       >
                         <span>{c.code}</span>
-                        <span className="text-slate-400 font-mono">{c.symbol}</span>
+                        <span className="text-slate-400 font-mono">
+                          {c.symbol}
+                        </span>
                       </button>
                     ))}
                   </motion.div>
@@ -252,8 +313,8 @@ export const Header: React.FC<HeaderProps> = ({
                         }}
                         className={`w-full text-left px-3 py-1.5 text-xs rounded-lg flex items-center gap-2 transition-colors ${
                           currentLang === l.code
-                            ? 'bg-[#C9A96E]/20 text-[#D8B978] font-bold'
-                            : 'text-slate-300 hover:bg-white/5'
+                            ? "bg-[#C9A96E]/20 text-[#D8B978] font-bold"
+                            : "text-slate-300 hover:bg-white/5"
                         }`}
                       >
                         <span>{l.flag}</span>
@@ -283,7 +344,11 @@ export const Header: React.FC<HeaderProps> = ({
               className="p-2 text-slate-300 hover:text-white"
               aria-label="Travel Music Toggle"
             >
-              {isMusicPlaying ? <Volume2 className="w-5 h-5 text-[#D8B978] animate-pulse" /> : <VolumeX className="w-5 h-5 text-slate-500" />}
+              {isMusicPlaying ? (
+                <Volume2 className="w-5 h-5 text-[#D8B978] animate-pulse" />
+              ) : (
+                <VolumeX className="w-5 h-5 text-slate-500" />
+              )}
             </button>
             <button
               onClick={() => setIsMobileMenuOpen(true)}
@@ -309,10 +374,10 @@ export const Header: React.FC<HeaderProps> = ({
             />
 
             <motion.div
-              initial={{ x: '100%' }}
+              initial={{ x: "100%" }}
               animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 26, stiffness: 280 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 26, stiffness: 280 }}
               className="relative z-50 w-4/5 max-w-sm h-full bg-[#0B0F14] border-l border-[#C9A96E]/30 p-6 flex flex-col justify-between shadow-2xl overflow-y-auto"
             >
               {/* Drawer Header */}
@@ -334,6 +399,34 @@ export const Header: React.FC<HeaderProps> = ({
 
                 {/* Mobile Navigation List */}
                 <div className="flex flex-col space-y-3 mt-6">
+                  {/* Tra cứu vé mobile shortcut */}
+                  {onOpenTicketLookup && (
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        onOpenTicketLookup();
+                      }}
+                      className="flex items-center gap-2.5 p-2.5 rounded-xl bg-[#D8B978]/15 border border-[#D8B978]/40 text-[#D8B978] text-sm font-bold text-left"
+                    >
+                      <Search className="w-4 h-4" />
+                      <span>Tra Cứu Vé & QR Pass</span>
+                    </button>
+                  )}
+
+                  {/* Lịch vé rẻ mobile shortcut */}
+                  {onOpenFareCalendar && (
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        onOpenFareCalendar();
+                      }}
+                      className="flex items-center gap-2.5 p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-700/40 text-emerald-300 text-sm font-bold text-left"
+                    >
+                      <Calendar className="w-4 h-4" />
+                      <span>Lịch Vé Rẻ (-38%)</span>
+                    </button>
+                  )}
+
                   {navItems.map((item, idx) => (
                     <a
                       key={idx}
@@ -365,16 +458,20 @@ export const Header: React.FC<HeaderProps> = ({
                   <button
                     onClick={toggleMusic}
                     className={`px-3 py-1 rounded-md text-xs font-bold font-mono ${
-                      isMusicPlaying ? 'bg-[#C9A96E] text-[#0B0F14]' : 'bg-slate-800 text-slate-400'
+                      isMusicPlaying
+                        ? "bg-[#C9A96E] text-[#0B0F14]"
+                        : "bg-slate-800 text-slate-400"
                     }`}
                   >
-                    {isMusicPlaying ? 'ON' : 'OFF'}
+                    {isMusicPlaying ? "ON" : "OFF"}
                   </button>
                 </div>
 
                 {/* Language Picker */}
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400 uppercase tracking-wider">Language</span>
+                  <span className="text-xs text-slate-400 uppercase tracking-wider">
+                    Language
+                  </span>
                   <div className="flex gap-2">
                     {languages.map((l) => (
                       <button
@@ -385,8 +482,8 @@ export const Header: React.FC<HeaderProps> = ({
                         }}
                         className={`px-2.5 py-1 text-xs rounded-md font-bold ${
                           currentLang === l.code
-                            ? 'bg-[#C9A96E] text-[#0B0F14]'
-                            : 'bg-white/5 text-slate-400'
+                            ? "bg-[#C9A96E] text-[#0B0F14]"
+                            : "bg-white/5 text-slate-400"
                         }`}
                       >
                         {l.code}
@@ -397,7 +494,9 @@ export const Header: React.FC<HeaderProps> = ({
 
                 {/* Currency Picker */}
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400 uppercase tracking-wider">Currency</span>
+                  <span className="text-xs text-slate-400 uppercase tracking-wider">
+                    Currency
+                  </span>
                   <div className="flex gap-2">
                     {currencies.map((c) => (
                       <button
@@ -408,8 +507,8 @@ export const Header: React.FC<HeaderProps> = ({
                         }}
                         className={`px-2 py-1 text-xs rounded-md font-mono ${
                           currentCurrency === c.code
-                            ? 'bg-[#D8B978] text-[#0B0F14] font-bold'
-                            : 'bg-white/5 text-slate-400'
+                            ? "bg-[#D8B978] text-[#0B0F14] font-bold"
+                            : "bg-white/5 text-slate-400"
                         }`}
                       >
                         {c.code}
