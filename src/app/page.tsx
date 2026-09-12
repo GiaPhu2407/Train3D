@@ -35,12 +35,18 @@ export default function Home() {
   const [isV2Active, setIsV2Active] = useState<boolean>(false);
   const [isTicketLookupOpen, setIsTicketLookupOpen] = useState<boolean>(false);
   const [isFareCalendarOpen, setIsFareCalendarOpen] = useState<boolean>(false);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   // Check saved V2 preference from localStorage
+  // Check saved V2 preference and theme from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("railway_v2_active");
     if (saved === "true") {
       setIsV2Active(true);
+    }
+    const savedTheme = localStorage.getItem("railway_theme") as 'dark' | 'light' | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
     }
   }, []);
 
@@ -51,6 +57,12 @@ export default function Home() {
   const handleToggleV2 = (val: boolean) => {
     setIsV2Active(val);
     localStorage.setItem("railway_v2_active", val ? "true" : "false");
+  };
+
+  const handleToggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    localStorage.setItem("railway_theme", next);
   };
 
   // Handle Search Submission from Hero or Route selection
@@ -115,6 +127,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#070A0E] text-slate-100 flex flex-col selection:bg-[#D8B978] selection:text-[#0B0F14]">
+    <div
+      className={`min-h-screen transition-colors duration-500 ${
+        theme === 'light' ? 'bg-[#F4F6F9] text-slate-900' : 'bg-[#070A0E] text-slate-100'
+      } flex flex-col selection:bg-[#D8B978] selection:text-[#0B0F14]`}
+    >
       {/* 1. Cinematic Loading Screen */}
       <LoadingScreen />
 
@@ -136,6 +153,9 @@ export default function Home() {
         onOpenFareCalendar={() => setIsFareCalendarOpen(true)}
         isV2Active={isV2Active}
         onTriggerUpdate={handleActivateV2}
+        onToggleV2={handleToggleV2}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
       />
 
       {/* 4. MAIN CONTENT: V2 NEW EXPERIENCE vs CLASSIC V1 */}
