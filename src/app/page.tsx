@@ -35,7 +35,7 @@ export default function Home() {
   const [isV2Active, setIsV2Active] = useState<boolean>(false);
   const [isTicketLookupOpen, setIsTicketLookupOpen] = useState<boolean>(false);
   const [isFareCalendarOpen, setIsFareCalendarOpen] = useState<boolean>(false);
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
 
   // Check saved V2 preference from localStorage
   // Check saved V2 preference and theme from localStorage
@@ -44,7 +44,10 @@ export default function Home() {
     if (saved === "true") {
       setIsV2Active(true);
     }
-    const savedTheme = localStorage.getItem("railway_theme") as 'dark' | 'light' | null;
+    const savedTheme = localStorage.getItem("railway_theme") as
+      | "dark"
+      | "light"
+      | null;
     if (savedTheme) {
       setTheme(savedTheme);
     }
@@ -60,7 +63,7 @@ export default function Home() {
   };
 
   const handleToggleTheme = () => {
-    const next = theme === 'dark' ? 'light' : 'dark';
+    const next = theme === "dark" ? "light" : "dark";
     setTheme(next);
     localStorage.setItem("railway_theme", next);
   };
@@ -126,10 +129,11 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070A0E] text-slate-100 flex flex-col selection:bg-[#D8B978] selection:text-[#0B0F14]">
     <div
       className={`min-h-screen transition-colors duration-500 ${
-        theme === 'light' ? 'bg-[#F4F6F9] text-slate-900' : 'bg-[#070A0E] text-slate-100'
+        theme === "light"
+          ? "bg-[#F4F6F9] text-slate-900"
+          : "bg-[#070A0E] text-slate-100"
       } flex flex-col selection:bg-[#D8B978] selection:text-[#0B0F14]`}
     >
       {/* 1. Cinematic Loading Screen */}
